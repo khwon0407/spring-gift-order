@@ -13,13 +13,13 @@ public class KakaoTokenResponseDto {
     private String idToken;
     
     @JsonProperty("expires_in")
-    private int expiresIn;
+    private Integer expiresIn;
     
     @JsonProperty("refresh_token")
     private String refreshToken;
     
     @JsonProperty("refresh_token_expires_in")
-    private int refreshTokenExpiresIn;
+    private Integer refreshTokenExpiresIn;
     
     private String scope;
     
@@ -51,7 +51,7 @@ public class KakaoTokenResponseDto {
         this.idToken = idToken;
     }
     
-    public int getExpiresIn() {
+    public Integer getExpiresIn() {
         return expiresIn;
     }
     
@@ -67,7 +67,7 @@ public class KakaoTokenResponseDto {
         this.refreshToken = refreshToken;
     }
     
-    public int getRefreshTokenExpiresIn() {
+    public Integer getRefreshTokenExpiresIn() {
         return refreshTokenExpiresIn;
     }
     
