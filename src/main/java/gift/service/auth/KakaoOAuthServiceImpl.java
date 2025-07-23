@@ -24,6 +24,13 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     }
     
     @Override
+    public String getKakaoLoginLink() {
+        return "https://kauth.kakao.com/oauth/authorize?response_type=code"
+            + "&client_id=" + properties.getClientId()
+            + "&redirect_uri=" + properties.getRedirectUri();
+    }
+    
+    @Override
     public KakaoAccessTokenResponseDto getKakaoAccessToken(String authorizationCode) {
         
         RequestEntity<MultiValueMap<String, String>> request = createRequest(authorizationCode);
