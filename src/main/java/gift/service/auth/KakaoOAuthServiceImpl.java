@@ -39,14 +39,6 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
         return new KakaoAccessTokenResponseDto(tokenResponse.getAccessToken());
     }
     
-    private KakaoTokenResponseDto getKakaoToken(RequestEntity<MultiValueMap<String, String>> request) {
-        RestTemplate restTemplate = new RestTemplate();
-        
-        ResponseEntity<KakaoTokenResponseDto> response = restTemplate.exchange(request, KakaoTokenResponseDto.class);
-        
-        return response.getBody();
-    }
-    
     private RequestEntity<MultiValueMap<String, String>> createRequest(String authorizationCode) {
         String url = "https://kauth.kakao.com/oauth/token";
         
@@ -60,5 +52,13 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
         body.add("code", authorizationCode);
         
         return new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+    }
+    
+    private KakaoTokenResponseDto getKakaoToken(RequestEntity<MultiValueMap<String, String>> request) {
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<KakaoTokenResponseDto> response = restTemplate.exchange(request, KakaoTokenResponseDto.class);
+        
+        return response.getBody();
     }
 }
