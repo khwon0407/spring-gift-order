@@ -1,6 +1,7 @@
 package gift.controller.oauth;
 
 import gift.config.KakaoProperties;
+import gift.dto.api.oauth.KakaoAccessTokenResponseDto;
 import gift.dto.api.oauth.KakaoTokenResponseDto;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,7 @@ public class KakaoOAuthController {
     }
     
     @GetMapping
-    public ResponseEntity<String> getAccessToken(
+    public ResponseEntity<KakaoAccessTokenResponseDto> getAccessToken(
         @RequestParam(name = "code") String authorizationCode
     ) {
         var url = "https://kauth.kakao.com/oauth/token";
@@ -45,8 +46,8 @@ public class KakaoOAuthController {
         
         KakaoTokenResponseDto tokenResponse = response.getBody();
         
-        String accessToken = tokenResponse.getAccessToken();
+        KakaoAccessTokenResponseDto responseDto = new KakaoAccessTokenResponseDto(tokenResponse.getAccessToken());
         
-        return new ResponseEntity<>(accessToken, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }
