@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KakaoOAuthServiceImpl implements KakaoOAuthService {
@@ -25,9 +26,12 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     
     @Override
     public String getKakaoLoginLink() {
-        return "https://kauth.kakao.com/oauth/authorize?response_type=code"
-            + "&client_id=" + properties.getClientId()
-            + "&redirect_uri=" + properties.getRedirectUri();
+        return UriComponentsBuilder.fromUriString("https://kauth.kakao.com/oauth/authorize")
+            .queryParam("response_type", "code")
+            .queryParam("client_id", properties.clientId())
+            .queryParam("redirect_uri", properties.redirectUri())
+            .build()
+            .toUriString();
     }
     
     @Override
@@ -47,8 +51,8 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
         
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", properties.getClientId());
-        body.add("redirect_uri", properties.getRedirectUri());
+        body.add("client_id", properties.clientId());
+        body.add("redirect_uri", properties.redirectUri());
         body.add("code", authorizationCode);
         
         return new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
