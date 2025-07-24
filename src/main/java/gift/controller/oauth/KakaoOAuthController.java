@@ -1,6 +1,6 @@
 package gift.controller.oauth;
 
-import gift.dto.api.oauth.KakaoAccessTokenResponseDto;
+import gift.dto.api.oauth.KakaoLoginResponseDto;
 import gift.service.auth.KakaoOAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,10 +26,10 @@ public class KakaoOAuthController {
     }
     
     @GetMapping
-    public ResponseEntity<KakaoAccessTokenResponseDto> getAccessToken(
+    public ResponseEntity<KakaoLoginResponseDto> kakaoLogin(
         @RequestParam(name = "code") String authorizationCode
     ) {
-        KakaoAccessTokenResponseDto responseDto = kakaoOAuthService.getKakaoAccessToken(authorizationCode);
+        KakaoLoginResponseDto responseDto = kakaoOAuthService.kakaoLogin(authorizationCode);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }

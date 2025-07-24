@@ -1,8 +1,13 @@
 package gift.service.auth;
 
+import gift.auth.JwtProvider;
 import gift.config.KakaoProperties;
-import gift.dto.api.oauth.KakaoAccessTokenResponseDto;
+import gift.dto.api.oauth.KakaoLoginResponseDto;
 import gift.dto.api.oauth.KakaoTokenResponseDto;
+import gift.dto.api.oauth.KakaoUserResponseDto;
+import gift.entity.Member;
+import gift.entity.Role;
+import gift.repository.member.MemberRepository;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,10 +25,15 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     
     private final KakaoProperties properties;
     private final RestTemplate restTemplate;
+    private final JwtProvider jwtProvider;
+    private final MemberRepository memberRepository;
     
-    public KakaoOAuthServiceImpl(KakaoProperties properties, RestTemplate restTemplate) {
+    public KakaoOAuthServiceImpl(KakaoProperties properties, RestTemplate restTemplate,
+        JwtProvider jwtProvider, MemberRepository memberRepository) {
         this.properties = properties;
         this.restTemplate = restTemplate;
+        this.jwtProvider = jwtProvider;
+        this.memberRepository = memberRepository;
     }
     
     @Override
@@ -37,12 +47,20 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     }
     
     @Override
-    public KakaoAccessTokenResponseDto getKakaoAccessToken(String authorizationCode) {
+    public KakaoLoginResponseDto kakaoLogin(String authorizationCode) {
         
         RequestEntity<MultiValueMap<String, String>> request = createRequest(authorizationCode);
         KakaoTokenResponseDto tokenResponse = getKakaoToken(request);
+        String accessToken = tokenResponse.getAccessToken();
         
-        return new KakaoAccessTokenResponseDto(tokenResponse.getAccessToken());
+        String email = getKakaoEmail(accessToken);
+        
+        Member member = memberRepository.findByEmail(email)
+            .orElseGet(() -> memberRepository.save(new Member(null, email, "kakaopw", Role.USER)));
+        
+        String authToken = jwtProvider.createToken(member);
+        
+        return new KakaoLoginResponseDto(accessToken, authToken);
     }
     
     private RequestEntity<MultiValueMap<String, String>> createRequest(String authorizationCode) {
@@ -64,5 +82,21 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
         ResponseEntity<KakaoTokenResponseDto> response = restTemplate.exchange(request, KakaoTokenResponseDto.class);
         
         return response.getBody();
+    }
+    
+    private String getKakaoEmail(String accessToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        
+        RequestEntity<Void> request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
+        
+        ResponseEntity<KakaoUserResponseDto> response = restTemplate.exchange(
+            request,
+            KakaoUserResponseDto.class
+        );
+        
+        return response.getBody().getKakaoAccount().getEmail();
     }
 }
