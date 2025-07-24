@@ -19,9 +19,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     
     private final KakaoProperties properties;
+    private final RestTemplate restTemplate;
     
-    public KakaoOAuthServiceImpl(KakaoProperties properties) {
+    public KakaoOAuthServiceImpl(KakaoProperties properties, RestTemplate restTemplate) {
         this.properties = properties;
+        this.restTemplate = restTemplate;
     }
     
     @Override
@@ -59,8 +61,6 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     }
     
     private KakaoTokenResponseDto getKakaoToken(RequestEntity<MultiValueMap<String, String>> request) {
-        RestTemplate restTemplate = new RestTemplate();
-        
         ResponseEntity<KakaoTokenResponseDto> response = restTemplate.exchange(request, KakaoTokenResponseDto.class);
         
         return response.getBody();
