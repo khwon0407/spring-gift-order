@@ -1,14 +1,19 @@
-package gift.exception.handler;
+package gift.exception;
 
 
 import gift.exception.common.HttpException;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,5 +42,35 @@ public class GlobalExceptionHandler {
         }
         
         return ResponseEntity.badRequest().body("데이터 무결성 예외 발생: " + message);
+    }
+    
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<Map<String, String>> handleHttpClientError(HttpClientErrorException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            Map.of(
+                "error", "KAKAO_CLIENT_ERROR",
+                "message", e.getResponseBodyAsString()
+            )
+        );
+    }
+    
+    @ExceptionHandler(HttpServerErrorException.class)
+    public ResponseEntity<Map<String, String>> handleHttpServerError(HttpServerErrorException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(
+            Map.of(
+                "error", "KAKAO_SERVER_ERROR",
+                "message", e.getResponseBodyAsString()
+            )
+        );
+    }
+    
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<Map<String, String>> handleResourceAccess(ResourceAccessException e) {
+        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(
+            Map.of(
+                "error", "KAKAO_NETWORK_ERROR",
+                "message", e.getMessage()
+            )
+        );
     }
 }
