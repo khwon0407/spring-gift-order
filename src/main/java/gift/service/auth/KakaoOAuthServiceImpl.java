@@ -56,7 +56,7 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
         String email = getKakaoEmail(accessToken);
         
         Member member = memberRepository.findByEmail(email)
-            .orElseGet(() -> memberRepository.save(new Member(null, email, "kakaopw", Role.USER)));
+            .orElseGet(() -> memberRepository.save(new Member(null, email, "kakaopw", Role.USER, accessToken)));
         
         String authToken = jwtProvider.createToken(member);
         
