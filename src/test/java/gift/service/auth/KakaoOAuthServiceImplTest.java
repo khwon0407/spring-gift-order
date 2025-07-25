@@ -66,7 +66,7 @@ class KakaoOAuthServiceImplTest {
     void 신규멤버로_로그인한다() {
         // given
         when(properties.clientId()).thenReturn("test-client-id");
-        when(properties.redirectUri()).thenReturn("http://localhost/callback");
+        when(properties.redirectUri()).thenReturn("http://localhost:8080");
         
         String authorizationCode = "test-code";
         String kakaoAccessToken = "kakao-access-token";
@@ -106,7 +106,7 @@ class KakaoOAuthServiceImplTest {
     void 기존멤버로_로그인한다() {
         // given
         when(properties.clientId()).thenReturn("test-client-id");
-        when(properties.redirectUri()).thenReturn("http://localhost/callback");
+        when(properties.redirectUri()).thenReturn("http://localhost:8080");
         
         String authorizationCode = "test-code";
         String kakaoAccessToken = "kakao-access-token";
@@ -120,13 +120,11 @@ class KakaoOAuthServiceImplTest {
             new KakaoAccount(email)
         );
         
-        // RestTemplate mock
         when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoTokenResponseDto.class)))
             .thenReturn(ResponseEntity.ok(tokenResponse));
         when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoUserResponseDto.class)))
             .thenReturn(ResponseEntity.ok(userResponse));
         
-        // 기존 회원
         Member existingMember = new Member(1L, email, "kakaopw", Role.USER);
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(existingMember));
         when(jwtProvider.createToken(existingMember)).thenReturn(jwtToken);
