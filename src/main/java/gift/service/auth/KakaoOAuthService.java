@@ -1,10 +1,10 @@
 package gift.service.auth;
 
-import gift.dto.api.oauth.KakaoLoginResponseDto;
+import gift.dto.api.member.MemberResponseDto;
 
 public interface KakaoOAuthService {
     
     String getKakaoLoginLink();
     
-    KakaoLoginResponseDto kakaoLogin(String authorizationCode);
+    MemberResponseDto kakaoLogin(String authorizationCode);
 }

@@ -2,7 +2,7 @@ package gift.service.auth;
 
 import gift.auth.JwtProvider;
 import gift.config.KakaoProperties;
-import gift.dto.api.oauth.KakaoLoginResponseDto;
+import gift.dto.api.member.MemberResponseDto;
 import gift.dto.api.oauth.KakaoTokenResponseDto;
 import gift.dto.api.oauth.KakaoUserResponseDto;
 import gift.entity.Member;
@@ -47,7 +47,7 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
     }
     
     @Override
-    public KakaoLoginResponseDto kakaoLogin(String authorizationCode) {
+    public MemberResponseDto kakaoLogin(String authorizationCode) {
         
         RequestEntity<MultiValueMap<String, String>> request = createRequest(authorizationCode);
         KakaoTokenResponseDto tokenResponse = getKakaoToken(request);
@@ -60,7 +60,7 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
         
         String authToken = jwtProvider.createToken(member);
         
-        return new KakaoLoginResponseDto(accessToken, authToken);
+        return new MemberResponseDto(authToken);
     }
     
     private RequestEntity<MultiValueMap<String, String>> createRequest(String authorizationCode) {

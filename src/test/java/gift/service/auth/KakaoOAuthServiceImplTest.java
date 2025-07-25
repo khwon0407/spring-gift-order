@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import gift.auth.JwtProvider;
 import gift.config.KakaoProperties;
-import gift.dto.api.oauth.KakaoLoginResponseDto;
+import gift.dto.api.member.MemberResponseDto;
 import gift.dto.api.oauth.KakaoTokenResponseDto;
 import gift.dto.api.oauth.KakaoUserResponseDto;
 import gift.dto.api.oauth.KakaoUserResponseDto.KakaoAccount;
@@ -91,11 +91,10 @@ class KakaoOAuthServiceImplTest {
         when(jwtProvider.createToken(any(Member.class))).thenReturn(jwtToken);
         
         // when
-        KakaoLoginResponseDto response = kakaoOAuthService.kakaoLogin(authorizationCode);
+        MemberResponseDto response = kakaoOAuthService.kakaoLogin(authorizationCode);
         
         // then
-        assertThat(response.accessToken()).isEqualTo(kakaoAccessToken);
-        assertThat(response.authToken()).isEqualTo(jwtToken);
+        assertThat(response.token()).isEqualTo(jwtToken);
         
         ArgumentCaptor<Member> memberCaptor = ArgumentCaptor.forClass(Member.class);
         verify(memberRepository).save(memberCaptor.capture());
@@ -130,11 +129,10 @@ class KakaoOAuthServiceImplTest {
         when(jwtProvider.createToken(existingMember)).thenReturn(jwtToken);
         
         // when
-        KakaoLoginResponseDto response = kakaoOAuthService.kakaoLogin(authorizationCode);
+        MemberResponseDto response = kakaoOAuthService.kakaoLogin(authorizationCode);
         
         // then
-        assertThat(response.accessToken()).isEqualTo(kakaoAccessToken);
-        assertThat(response.authToken()).isEqualTo(jwtToken);
+        assertThat(response.token()).isEqualTo(jwtToken);
         verify(memberRepository, never()).save(any(Member.class));
     }
     
