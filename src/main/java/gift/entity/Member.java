@@ -29,11 +29,22 @@ public class Member {
     @Column(name = "role", nullable = false)
     private Role role;
     
+    @Column(name = "access_token")
+    private String accessToken;
+    
     public Member(Long id, String email, String password, Role role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+    
+    public Member(Long id, String email, String password, Role role, String accessToken) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.accessToken = accessToken;
     }
     
     protected Member() {
@@ -54,5 +65,9 @@ public class Member {
     
     public Role getRole() {
         return role;
+    }
+    
+    public String getAccessToken() {
+        return accessToken;
     }
 }

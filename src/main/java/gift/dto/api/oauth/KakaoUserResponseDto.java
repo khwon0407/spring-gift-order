@@ -1,0 +1,31 @@
+package gift.dto.api.oauth;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class KakaoUserResponseDto {
+    
+    @JsonProperty("kakao_account")
+    private KakaoAccount kakaoAccount;
+    
+    public KakaoUserResponseDto() {}
+    
+    public KakaoUserResponseDto(KakaoAccount kakaoAccount) {
+        this.kakaoAccount = kakaoAccount;
+    }
+    
+    public KakaoAccount getKakaoAccount() {
+        return kakaoAccount;
+    }
+    
+    public static class KakaoAccount {
+        private String email;
+        
+        public KakaoAccount() {}
+        
+        public KakaoAccount(String email) {
+            this.email = email;
+        }
+        
+        public String getEmail() { return email; }
+    }
+}
