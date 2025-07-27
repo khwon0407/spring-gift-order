@@ -2,6 +2,8 @@ package gift.controller.order;
 
 import gift.config.annotation.CurrentUser;
 import gift.config.annotation.ValidHeader;
+import gift.dto.api.order.OrderRequestDto;
+import gift.dto.api.order.OrderResponseDto;
 import gift.entity.Member;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,6 @@ public class OrderController {
         @CurrentUser Member user
     ) {
         OrderResponseDto responseDto = orderService.orderProduct(requestDto, user);
-        return new ResponseEntity<OrderResponseDto>(responseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 }
