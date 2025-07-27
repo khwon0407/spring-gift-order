@@ -2,6 +2,7 @@ package gift.service.order;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -78,6 +79,29 @@ class OrderServiceImplTest {
         assertEquals(2, response.getQuantity());
         verify(optionService, times(1)).decreaseOptionQuantity(1L, 2L);
         verify(wishlistService, never()).deleteFromMyWishlist(any(), any());
+        verify(orderRepository, times(1)).save(any(Order.class));
+    }
+    
+    @Test
+    void 위시리스트_물건의_정상_주문() {
+        // given
+        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, "테스트 메시지");
+        Order savedOrder = new Order(1L, 1L, 2L, LocalDateTime.now(), "테스트 메시지");
+        WishlistInfo wishlistInfo = new WishlistInfo(1L, member, product, 1L); // 가짜 위시리스트 데이터
+        
+        when(optionRepository.findById(1L)).thenReturn(Optional.of(productOption));
+        when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
+        when(wishlistRepository.findByMemberIdAndProductId(1L, 1L)).thenReturn(Optional.of(wishlistInfo));
+        
+        // when
+        OrderResponseDto response = orderService.orderProduct(requestDto, member);
+        
+        // then
+        assertNotNull(response);
+        assertEquals(1L, response.getId());
+        assertEquals(2, response.getQuantity());
+        verify(optionService, times(1)).decreaseOptionQuantity(1L, 2L);
+        verify(wishlistService, times(1)).deleteFromMyWishlist(eq(member), eq(1L));
         verify(orderRepository, times(1)).save(any(Order.class));
     }
     
