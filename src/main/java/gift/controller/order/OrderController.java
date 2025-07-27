@@ -5,6 +5,7 @@ import gift.config.annotation.ValidHeader;
 import gift.dto.api.order.OrderRequestDto;
 import gift.dto.api.order.OrderResponseDto;
 import gift.entity.Member;
+import gift.service.order.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
