@@ -11,6 +11,15 @@ public class OrderResponseDto {
     private LocalDateTime orderDateTime;
     private String message;
     
+    public OrderResponseDto(Long id, Long optionId, Long quantity, LocalDateTime orderDateTime,
+        String message) {
+        this.id = id;
+        this.optionId = optionId;
+        this.quantity = quantity;
+        this.orderDateTime = orderDateTime;
+        this.message = message;
+    }
+    
     public Long getId() {
         return id;
     }
