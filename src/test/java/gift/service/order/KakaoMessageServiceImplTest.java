@@ -27,7 +27,7 @@ class KakaoMessageServiceImplTest {
     private KakaoMessageServiceImpl kakaoMessageService;
     
     @Test
-    void sendKakaoMessage_success() {
+    void 카카오메시지_성공() {
         // given
         Member user = new Member(1L, "test@test.com", "pwpw", Role.USER, "testAccessToken");
         
@@ -45,7 +45,7 @@ class KakaoMessageServiceImplTest {
     }
     
     @Test
-    void sendKakaoMessage_skipWhenNoAccessToken() {
+    void 토큰_없을_시_메시지_패스() {
         // given
         Member user = new Member(1L, "test@test.com", "pwpw", Role.USER);
         
