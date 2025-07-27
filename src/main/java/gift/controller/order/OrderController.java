@@ -28,8 +28,8 @@ public class OrderController {
     @PostMapping
     @ValidHeader
     public ResponseEntity<OrderResponseDto> orderProduct(
-        @RequestBody OrderRequestDto requestDto,
-        @CurrentUser Member user
+        @CurrentUser Member user,
+        @RequestBody OrderRequestDto requestDto
     ) {
         OrderResponseDto responseDto = orderService.orderProduct(requestDto, user);
         kakaoMessageService.sendKakaoMessage(user, responseDto);
