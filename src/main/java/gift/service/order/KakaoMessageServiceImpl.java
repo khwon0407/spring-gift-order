@@ -1,6 +1,9 @@
 package gift.service.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.api.order.OrderResponseDto;
+import gift.dto.api.order.TextTemplate;
 import gift.entity.Member;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
@@ -45,17 +48,13 @@ public class KakaoMessageServiceImpl implements KakaoMessageService {
     }
     
     private String createTextTemplate(String message) {
+        TextTemplate template = new TextTemplate(message);
+        ObjectMapper objectMapper = new ObjectMapper();
         
-        return """
-        {
-            "object_type": "text",
-            "text": "%s",
-            "link": {
-                "web_url": "https://your-site.com",
-                "mobile_web_url": "https://your-site.com"
-            },
-            "button_title": "확인"
+        try {
+            return objectMapper.writeValueAsString(template);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 직렬화 실패", e);
         }
-        """.formatted(message);
     }
 }
