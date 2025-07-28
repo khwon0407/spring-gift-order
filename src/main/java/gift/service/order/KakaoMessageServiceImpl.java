@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,7 +23,9 @@ public class KakaoMessageServiceImpl implements KakaoMessageService {
     public KakaoMessageServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+    
     @Override
+    @Async
     public void sendKakaoMessage(Member user, OrderResponseDto responseDto) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         
