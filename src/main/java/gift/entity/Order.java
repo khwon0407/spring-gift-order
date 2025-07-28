@@ -30,6 +30,14 @@ public class Order {
     
     protected Order() {}
     
+    public Order(Long optionId, Long quantity, LocalDateTime orderDateTime,
+        String message) {
+        this.optionId = optionId;
+        this.quantity = quantity;
+        this.orderDateTime = orderDateTime;
+        this.message = message;
+    }
+    
     public Order(Long id, Long optionId, Long quantity, LocalDateTime orderDateTime,
         String message) {
         this.id = id;

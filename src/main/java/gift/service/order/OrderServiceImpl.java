@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         
         //실제 주문 기록 저장
         LocalDateTime now = LocalDateTime.now();
-        Order newOrder = new Order(null, requestDto.optionId(), requestDto.quantity(), now,
+        Order newOrder = new Order(requestDto.optionId(), requestDto.quantity(), now,
             requestDto.message());
         Order saved = orderRepository.save(newOrder);
         
