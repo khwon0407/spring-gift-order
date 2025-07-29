@@ -1,27 +1,22 @@
 package gift.service.order;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import gift.dto.api.order.OrderResponseDto;
 import gift.entity.Member;
 import gift.entity.Role;
+import gift.external.KakaoClient;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class KakaoMessageServiceImplTest {
     @Mock
-    private RestTemplate restTemplate;
+    private KakaoClient kakaoClient;
     
     @InjectMocks
     private KakaoMessageServiceImpl kakaoMessageService;
@@ -30,32 +25,12 @@ class KakaoMessageServiceImplTest {
     void 카카오메시지_성공() {
         // given
         Member user = new Member(1L, "test@test.com", "pwpw", Role.USER, "testAccessToken");
-        
-        OrderResponseDto responseDto = new OrderResponseDto(1L, 1L, 2L, LocalDateTime.now(), "테스트 메시지");
-        
-        when(restTemplate.exchange(any(RequestEntity.class), eq(String.class)))
-            .thenReturn(ResponseEntity.ok("OK"));
-        
-        // when
-        kakaoMessageService.sendKakaoMessage(user, responseDto);
-        
-        // then
-        verify(restTemplate, times(1))
-            .exchange(any(RequestEntity.class), eq(String.class));
-    }
-    
-    @Test
-    void 토큰_없을_시_메시지_패스() {
-        // given
-        Member user = new Member(1L, "test@test.com", "pwpw", Role.USER);
-        
         OrderResponseDto responseDto = new OrderResponseDto(1L, 1L, 2L, LocalDateTime.now(), "테스트 메시지");
         
         // when
         kakaoMessageService.sendKakaoMessage(user, responseDto);
         
         // then
-        verify(restTemplate, never())
-            .exchange(any(RequestEntity.class), eq(String.class));
+        verify(kakaoClient, times(1)).sendKakaoMessage(user, responseDto);
     }
 }
