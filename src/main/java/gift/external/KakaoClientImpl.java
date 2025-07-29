@@ -41,7 +41,7 @@ public class KakaoClientImpl implements KakaoClient {
     }
     
     public String getKakaoLoginLink() {
-        return UriComponentsBuilder.fromUriString("https://kauth.kakao.com/oauth/authorize")
+        return UriComponentsBuilder.fromUriString(properties.authorizeUrl())
             .queryParam("response_type", "code")
             .queryParam("client_id", properties.clientId())
             .queryParam("redirect_uri", properties.redirectUri())
@@ -51,7 +51,7 @@ public class KakaoClientImpl implements KakaoClient {
     
     @Override
     public KakaoTokenResponseDto getKakaoToken(String authorizationCode) {
-        String url = "https://kauth.kakao.com/oauth/token";
+        String url = properties.tokenUrl();
         
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -69,7 +69,7 @@ public class KakaoClientImpl implements KakaoClient {
     
     @Override
     public String getKakaoEmail(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
+        String url = properties.userInfoUrl();
         
         KakaoUserResponseDto response = restClient.get()
             .uri(url)
@@ -82,7 +82,7 @@ public class KakaoClientImpl implements KakaoClient {
     
     @Override
     public void sendKakaoMessage(Member user, OrderResponseDto responseDto) {
-        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        String url = properties.messageSendUrl();
         
         String accessToken = user.getAccessToken();
         if (accessToken == null) {
