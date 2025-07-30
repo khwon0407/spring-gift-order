@@ -1,21 +1,17 @@
 package gift.service.auth;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gift.auth.JwtProvider;
-import gift.config.KakaoProperties;
 import gift.dto.api.member.MemberResponseDto;
 import gift.dto.api.oauth.KakaoTokenResponseDto;
-import gift.dto.api.oauth.KakaoUserResponseDto;
-import gift.dto.api.oauth.KakaoUserResponseDto.KakaoAccount;
 import gift.entity.Member;
 import gift.entity.Role;
+import gift.external.KakaoClient;
 import gift.repository.member.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -24,18 +20,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class KakaoOAuthServiceImplTest {
     
     @Mock
-    private KakaoProperties properties;
-    
-    @Mock
-    private RestTemplate restTemplate;
+    private KakaoClient kakaoClient;
     
     @Mock
     private JwtProvider jwtProvider;
@@ -49,25 +39,19 @@ class KakaoOAuthServiceImplTest {
     @Test
     void 카카오_엑세스토큰_획득을_위한_링크를_얻어온다() {
         // given
-        when(properties.clientId()).thenReturn("test-client-id");
-        when(properties.redirectUri()).thenReturn("http://localhost:8080");
+        String expectedLink = "https://kauth.kakao.com/oauth/authorize?client_id=test-client-id";
+        when(kakaoClient.getKakaoLoginLink()).thenReturn(expectedLink);
         
         // when
         String loginLink = kakaoOAuthService.getKakaoLoginLink();
         
         // then
-        assertThat(loginLink)
-            .contains("https://kauth.kakao.com/oauth/authorize")
-            .contains("client_id=test-client-id")
-            .contains("redirect_uri=http://localhost:8080");
+        assertThat(loginLink).isEqualTo(expectedLink);
     }
     
     @Test
     void 신규멤버로_로그인한다() {
         // given
-        when(properties.clientId()).thenReturn("test-client-id");
-        when(properties.redirectUri()).thenReturn("http://localhost:8080");
-        
         String authorizationCode = "test-code";
         String kakaoAccessToken = "kakao-access-token";
         String email = "test@kakao.com";
@@ -76,14 +60,8 @@ class KakaoOAuthServiceImplTest {
         KakaoTokenResponseDto tokenResponse = new KakaoTokenResponseDto();
         tokenResponse.setAccessToken(kakaoAccessToken);
         
-        KakaoUserResponseDto userResponse = new KakaoUserResponseDto(
-            new KakaoAccount(email)
-        );
-        
-        when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoTokenResponseDto.class)))
-            .thenReturn(ResponseEntity.ok(tokenResponse));
-        when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoUserResponseDto.class)))
-            .thenReturn(ResponseEntity.ok(userResponse));
+        when(kakaoClient.getKakaoToken(authorizationCode)).thenReturn(tokenResponse);
+        when(kakaoClient.getKakaoEmail(kakaoAccessToken)).thenReturn(email);
         
         when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -104,9 +82,6 @@ class KakaoOAuthServiceImplTest {
     @Test
     void 기존멤버로_로그인한다() {
         // given
-        when(properties.clientId()).thenReturn("test-client-id");
-        when(properties.redirectUri()).thenReturn("http://localhost:8080");
-        
         String authorizationCode = "test-code";
         String kakaoAccessToken = "kakao-access-token";
         String email = "existing@kakao.com";
@@ -115,14 +90,8 @@ class KakaoOAuthServiceImplTest {
         KakaoTokenResponseDto tokenResponse = new KakaoTokenResponseDto();
         tokenResponse.setAccessToken(kakaoAccessToken);
         
-        KakaoUserResponseDto userResponse = new KakaoUserResponseDto(
-            new KakaoAccount(email)
-        );
-        
-        when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoTokenResponseDto.class)))
-            .thenReturn(ResponseEntity.ok(tokenResponse));
-        when(restTemplate.exchange(any(RequestEntity.class), eq(KakaoUserResponseDto.class)))
-            .thenReturn(ResponseEntity.ok(userResponse));
+        when(kakaoClient.getKakaoToken(authorizationCode)).thenReturn(tokenResponse);
+        when(kakaoClient.getKakaoEmail(kakaoAccessToken)).thenReturn(email);
         
         Member existingMember = new Member(1L, email, "kakaopw", Role.USER);
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(existingMember));
@@ -135,5 +104,4 @@ class KakaoOAuthServiceImplTest {
         assertThat(response.token()).isEqualTo(jwtToken);
         verify(memberRepository, never()).save(any(Member.class));
     }
-    
 }

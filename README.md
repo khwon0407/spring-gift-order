@@ -10,3 +10,20 @@
 1. application.properties의 kakao.cliend-id가 반드시 채워져 있어야 함. 고의적으로 your-REST_API_KEY 로 채워놓았기에, 반드시 본인의 유효한 key를 입력할 것.
 2. localhost:8080/login/kakao 를 입력하면 자동으로 카카오 로그인 및 인가 코드 발행으로 연결됨. 카카오 로그인이 되어있을 경우 바로 엑세스 토큰 발급까지 이어짐.
 3. 로그인 시 리턴되는 값은 멤버 jwt token만 리턴됨. access token은 유저 정보에 저장하는 식으로 구현.
+
+
+## step 2. 주문하기
+1. 컨트롤러, dto 생성
+2. entity 및 repository 생성
+3. 서비스 생성 후 필요한 서비스 및 리포지토리 불러오기
+4. 상품 주문 구현
+5. 카카오톡 메시지 보내기 구현
+6. 필터 등록을 통해 구현 완성
+
+### 실행 시 주의사항
+1. 본인의 access code를 활용하여 나에게 보내기로 구현
+2. 실행에 있어 application.properties의 kakao.client-id가 반드시 채워져 있어야 함.
+3. 실행 순서
+   1. step1 로그인을 통해 token 발급 -> 발급 받은 token을 저장
+   2. 발급 받은 token을 헤더에 넣어 주문 프로토콜 실행
+   3. 주문 완료 후 메시지 발송

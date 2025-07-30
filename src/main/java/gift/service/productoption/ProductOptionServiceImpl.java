@@ -57,7 +57,7 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     @Transactional
     public void deleteOptionToProduct(Long productId, Long optionId) {
         Product product = productRepository.findById(productId).orElseThrow(NoProductInfoException::new);
-        ProductOption option = productOptionRepository.findById(optionId).orElseThrow(NoOptionInfoException::new);
+        ProductOption option = productOptionRepository.findWithLock(optionId).orElseThrow(NoOptionInfoException::new);
         
         if(!product.hasOption(option) || !option.isNotForProduct(product)) {
             throw new WrongProductOptionException();
@@ -73,7 +73,7 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     public OptionResponseDto modifyOptionsToProduct(Long productId, Long optionId,
         OptionRequestDto optionRequestDto) {
         Product product = productRepository.findById(productId).orElseThrow(NoProductInfoException::new);
-        ProductOption option = productOptionRepository.findById(optionId).orElseThrow(NoOptionInfoException::new);
+        ProductOption option = productOptionRepository.findWithLock(optionId).orElseThrow(NoOptionInfoException::new);
         
         if(!product.hasOption(option) || !option.isNotForProduct(product)) {
             throw new WrongProductOptionException();
@@ -92,7 +92,7 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     @Override
     @Transactional
     public void decreaseOptionQuantity(Long optionId, Long quantity) {
-        ProductOption option = productOptionRepository.findById(optionId)
+        ProductOption option = productOptionRepository.findWithLock(optionId)
             .orElseThrow(NoOptionInfoException::new);
         
         Long currentQuantity = option.getQuantity();
