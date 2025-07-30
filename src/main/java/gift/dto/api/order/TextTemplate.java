@@ -1,47 +1,56 @@
 package gift.dto.api.order;
 
-public class TextTemplate {
-    private String object_type;
-    private String text;
-    private Link link;
-    private String button_title;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class TextTemplate {
+    @JsonProperty("object_type")
+    private String objectType;
+    
+    @JsonProperty("text")
+    private String text;
+    
+    @JsonProperty("link")
+    private Link link;
+    
+    @JsonProperty("button_title")
+    private String buttonTitle;
+    
     public TextTemplate(String text) {
-        this.object_type = "text";
+        this.objectType = "text";
         this.text = text;
         this.link = new Link("https://your-site.com", "https://your-site.com");
-        this.button_title = "확인";
+        this.buttonTitle = "확인";
     }
-
-    public String getObject_type() {
-        return object_type;
+    
+    public String getObjectType() {
+        return objectType;
     }
-
-    public void setObject_type(String object_type) {
-        this.object_type = object_type;
+    
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
     }
-
+    
     public String getText() {
         return text;
     }
-
+    
     public void setText(String text) {
         this.text = text;
     }
-
+    
     public Link getLink() {
         return link;
     }
-
+    
     public void setLink(Link link) {
         this.link = link;
     }
-
-    public String getButton_title() {
-        return button_title;
+    
+    public String getButtonTitle() {
+        return buttonTitle;
     }
-
-    public void setButton_title(String button_title) {
-        this.button_title = button_title;
+    
+    public void setButtonTitle(String buttonTitle) {
+        this.buttonTitle = buttonTitle;
     }
 }
