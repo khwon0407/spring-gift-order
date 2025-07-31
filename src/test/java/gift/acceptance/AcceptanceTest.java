@@ -1,6 +1,7 @@
 package gift.acceptance;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,5 +34,16 @@ class AcceptanceTest {
             .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION))
             .andDo(print())
         ;
+    }
+    
+    @Test
+    void actualGetRequest_cors() throws Exception {
+        mockMvc.perform(
+                get("/api/products")
+                    .header(HttpHeaders.ORIGIN, "http://localhost:3000")
+            )
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000"))
+            .andDo(print());
     }
 }
