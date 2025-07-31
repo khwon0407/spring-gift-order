@@ -29,6 +29,11 @@ public class JwtHeaderFilter implements Filter {
         String path = httpRequest.getRequestURI();
         String method = httpRequest.getMethod();
         
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
         if (path.startsWith("/api/products") && "GET".equalsIgnoreCase(method)) {
             chain.doFilter(request, response);
             return;
